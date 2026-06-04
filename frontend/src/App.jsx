@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
-import Contracts from './pages/Contracts'
-import Templates from './pages/Templates'
-import Obras from './pages/Obras'
+import Contracts from './pages/Contracts/index'
+import Templates from './pages/Templates/index'
+import Obras from './pages/Obras/index'
 import Login from './pages/Login'
 import useAuthStore from './store/authStore'
 
