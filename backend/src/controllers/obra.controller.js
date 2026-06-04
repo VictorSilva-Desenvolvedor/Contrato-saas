@@ -73,3 +73,15 @@ exports.addVistoria = async (req, res) => {
   });
   res.json(vistoria);
 };
+exports.addVistoriaComFotos = async (req, res) => {
+  try {
+    const { type, description, photos } = req.body;
+    // photos = array de paths vindos do upload
+    const vistoria = await prisma.obraVistoria.create({
+      data: { type, description, photos: photos || [], obraId: req.params.id }
+    });
+    res.json(vistoria);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};

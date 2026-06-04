@@ -96,6 +96,7 @@ model Obra {
   custos      ObraCusto[]
   purchaseOrders PurchaseOrder[]
   createdAt   DateTime    @default(now())
+  manutencoes     ObraManutencao[]
 }
 
 model ObraStep {
@@ -149,4 +150,25 @@ model AuditLog {
   entity    String
   entityId  String
   createdAt DateTime @default(now())
+}
+model Upload {
+  id        String   @id @default(uuid())
+  entity    String
+  entityId  String
+  filename  String
+  path      String
+  mimetype  String
+  createdAt DateTime @default(now())
+}
+
+model ObraManutencao {
+  id          String   @id @default(uuid())
+  obraId      String
+  obra        Obra     @relation(fields: [obraId], references: [id])
+  description String
+  type        String
+  cost        Float    @default(0)
+  date        DateTime
+  executedBy  String
+  createdAt   DateTime @default(now())
 }
