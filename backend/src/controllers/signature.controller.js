@@ -63,3 +63,12 @@ exports.list = async (req, res) => {
   });
   res.json(requests);
 };
+// Verify and expire old pending signatures
+exports.expireOld = async (req, res) => {
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 dias
+  const result = await prisma.signatureRequest.updateMany({
+    where: { status: 'pending', sentAt: { lt: cutoff } },
+    data:  { status: 'expired' }
+  });
+  res.json({ expired: result.count });
+};
