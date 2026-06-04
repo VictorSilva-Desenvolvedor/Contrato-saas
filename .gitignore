@@ -1,32 +1,32 @@
-# Dependências
-node_modules/
+# # Dependências
+# node_modules/
 
-# Build
-dist/
-build/
-.next/
+# # Build
+# dist/
+# build/
+# .next/
 
-# Ambiente
-.env
-.env.*
-!.env.example
+# # Ambiente
+# .env
+# .env.*
+# !.env.example
 
-# Logs
-*.log
-npm-debug.log*
+# # Logs
+# *.log
+# npm-debug.log*
 
-# Sistema
-.DS_Store
-Thumbs.db
+# # Sistema
+# .DS_Store
+# Thumbs.db
 
-# IDE
-.vscode/
-.idea/
+# # IDE
+# .vscode/
+# .idea/
 
-# Banco local
-*.sqlite
-*.db
+# # Banco local
+# *.sqlite
+# *.db
 
-# Cache
-.cache/
-coverage/
+# # Cache
+# .cache/
+# coverage/
