@@ -3,13 +3,150 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url  = env("DATABASE_URL")
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  cnpj      String   @unique
+  createdAt DateTime @default(now())
+  users     User[]
+  contracts Contract[]
+  obras     Obra[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
+  name      String
   email     String   @unique
-  name      String?
+  password  String
+  role      String   @default("user")
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model ContractTemplate {
+  id        String                  @id @default(uuid())
+  name      String
+  category  String
+  content   String
+  fields    ContractTemplateField[]
+  contracts Contract[]
+  createdAt DateTime                @default(now())
+}
+
+model ContractTemplateField {
+  id         String           @id @default(uuid())
+  templateId String
+  template   ContractTemplate @relation(fields: [templateId], references: [id])
+  fieldName  String
+  fieldType  String
+  required   Boolean          @default(false)
+}
+
+model Contract {
+  id              String             @id @default(uuid())
+  companyId       String
+  company         Company            @relation(fields: [companyId], references: [id])
+  templateId      String?
+  template        ContractTemplate?  @relation(fields: [templateId], references: [id])
+  title           String
+  partyName       String
+  partyDocument   String
+  type            String
+  value           Float
+  startDate       DateTime
+  endDate         DateTime
+  status          String             @default("draft")
+  content         String
+  signatureRequests SignatureRequest[]
+  obras           Obra[]
+  createdAt       DateTime           @default(now())
+}
+
+model SignatureRequest {
+  id         String   @id @default(uuid())
+  contractId String
+  contract   Contract @relation(fields: [contractId], references: [id])
+  channel    String
+  sentTo     String
+  status     String   @default("pending")
+  token      String   @unique @default(uuid())
+  sentAt     DateTime @default(now())
+  signedAt   DateTime?
+}
+
+model Obra {
+  id          String      @id @default(uuid())
+  companyId   String
+  company     Company     @relation(fields: [companyId], references: [id])
+  contractId  String?
+  contract    Contract?   @relation(fields: [contractId], references: [id])
+  name        String
+  address     String
+  status      String      @default("planejamento")
+  budget      Float
+  startDate   DateTime
+  endDate     DateTime?
+  steps       ObraStep[]
+  vistorias   ObraVistoria[]
+  custos      ObraCusto[]
+  purchaseOrders PurchaseOrder[]
+  createdAt   DateTime    @default(now())
+}
+
+model ObraStep {
+  id          String   @id @default(uuid())
+  obraId      String
+  obra        Obra     @relation(fields: [obraId], references: [id])
+  title       String
+  description String?
+  phase       String
+  done        Boolean  @default(false)
+  doneAt      DateTime?
+}
+
+model ObraVistoria {
+  id          String   @id @default(uuid())
+  obraId      String
+  obra        Obra     @relation(fields: [obraId], references: [id])
+  type        String
+  description String
+  photos      String[]
+  createdAt   DateTime @default(now())
+}
+
+model ObraCusto {
+  id          String   @id @default(uuid())
+  obraId      String
+  obra        Obra     @relation(fields: [obraId], references: [id])
+  category    String
+  description String
+  amount      Float
+  date        DateTime
+  createdAt   DateTime @default(now())
+}
+
+model PurchaseOrder {
+  id          String   @id @default(uuid())
+  obraId      String
+  obra        Obra     @relation(fields: [obraId], references: [id])
+  cnpjPagador String
+  supplier    String
+  items       Json
+  total       Float
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String
   createdAt DateTime @default(now())
 }
