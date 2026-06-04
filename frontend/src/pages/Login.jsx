@@ -23,8 +23,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-indigo-50 flex items-center justify-center">
-      <div className="bg-black p-8 rounded-2xl shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-indigo-600 mb-2">ContratoSaaS</h1>
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold text-indigo-600 mb-2">Controle de Contratos
+& Gestão Orçamentária
+</h1>
         <p className="text-gray-500 mb-6">{isRegister ? 'Criar conta' : 'Entrar na plataforma'}</p>
 
         <div className="space-y-3">

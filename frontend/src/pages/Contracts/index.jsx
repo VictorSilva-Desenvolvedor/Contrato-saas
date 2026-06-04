@@ -40,7 +40,7 @@ export default function Contracts() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-1000">Contratos</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Contratos</h1>
         <button onClick={() => setShowModal(true)}
           className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
           <Plus size={16} /> Novo Contrato
