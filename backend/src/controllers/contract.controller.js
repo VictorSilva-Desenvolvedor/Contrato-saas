@@ -17,7 +17,24 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const data = { ...req.body, companyId: req.user.companyId, status: 'draft' };
+    const body = { ...req.body };
+    // Normalize and validate dates: accept YYYY-MM-DD or full ISO datetime
+    for (const field of ['startDate', 'endDate']) {
+      if (body[field]) {
+        let s = body[field];
+        if (typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s)) {
+          s = `${s}T00:00:00Z`;
+        }
+        const d = new Date(s);
+        if (isNaN(d.getTime())) {
+          return res.status(400).json({ error: `Invalid date for ${field}. Expected ISO-8601 DateTime.` });
+        }
+        body[field] = d;
+      }
+    }
+
+    const data = { ...body, companyId: req.user.companyId, status: 'draft' };
+    console.log('Creating contract with data:', data);
     const contract = await prisma.contract.create({ data });
     res.json(contract);
   } catch (err) {
@@ -35,9 +52,24 @@ exports.getOne = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
+    const body = { ...req.body };
+    for (const field of ['startDate', 'endDate']) {
+      if (body[field]) {
+        let s = body[field];
+        if (typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s)) {
+          s = `${s}T00:00:00Z`;
+        }
+        const d = new Date(s);
+        if (isNaN(d.getTime())) {
+          return res.status(400).json({ error: `Invalid date for ${field}. Expected ISO-8601 DateTime.` });
+        }
+        body[field] = d;
+      }
+    }
+
     const contract = await prisma.contract.update({
       where: { id: req.params.id },
-      data: req.body
+      data: body
     });
     res.json(contract);
   } catch (err) {
