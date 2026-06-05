@@ -24,7 +24,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <aside className="w-64 bg-white border-r flex flex-col overflow-y-auto">
+      <aside className="w-90 bg-white border-r flex flex-col overflow-y-auto">
         <div className="p-6 border-b">
           <h1 className="text-xl font-bold text-indigo-600">ContratoSaaS</h1>
           <p className="text-xs text-gray-400 mt-1">Gestão de Contratos & Obras</p>
