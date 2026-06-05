@@ -126,13 +126,6 @@ npm run dev
 - A autenticação utiliza token JWT enviado pelo frontend no header `Authorization`
 - O Prisma gerencia o banco de dados e as migrações estão em `backend/prisma/migrations`
 
-## Próximos passos sugeridos
-
-- Adicionar controle de permissões mais granular por roles
-- Melhorar a interface de relatórios e dashboards
-- Implementar notificações por WhatsApp via API externa
-- Criar testes automatizados para backend e frontend
-
 ## Contato
 
-Para dúvidas ou ajustes, abra uma issue no repositório ou entre em contato com o time responsável pelo desenvolvimento.
+Para dúvidas ou ajustes, abra uma issue no repositório ou entre em contato com o desenvolvedor pelo email victorpaulodev@gmail.com.
