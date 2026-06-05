@@ -10,20 +10,47 @@ const transporter = nodemailer.createTransport({
 
 exports.send = async (req, res) => {
   try {
-    const { contractId, channel, sentTo } = req.body;
+    const { contractId, channel, emailTo, whatsappTo } = req.body;
+
+    // Validações
+    if (channel === 'email' || channel === 'both') {
+      if (!emailTo || !validateEmail(emailTo)) {
+        return res.status(400).json({ error: 'E-mail inválido' });
+      }
+    }
+    if (channel === 'whatsapp' || channel === 'both') {
+      if (!whatsappTo) {
+        return res.status(400).json({ error: 'Número de WhatsApp obrigatório' });
+      }
+    }
 
     const sigRequest = await prisma.signatureRequest.create({
-      data: { contractId, channel, sentTo, status: 'pending' }
+      data: { 
+        contractId, 
+        channel, 
+        sentTo: channel === 'email' ? emailTo : (channel === 'whatsapp' ? whatsappTo : `${emailTo},${whatsappTo}`),
+        status: 'pending' 
+      }
     });
 
+    // Enviar por email se necessário
     if (channel === 'email' || channel === 'both') {
       const link = `http://localhost:5173/assinar/${sigRequest.token}`;
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
-        to: sentTo,
+        to: emailTo,
         subject: 'Contrato aguardando sua assinatura',
         html: `<p>Clique para assinar: <a href="${link}">${link}</a></p>`
       });
+      console.log(`✓ Email enviado para: ${emailTo}`);
+    }
+
+    // Enviar por WhatsApp se necessário (placeholder - integração futura com Twilio, etc)
+    if (channel === 'whatsapp' || channel === 'both') {
+      const link = `http://localhost:5173/assinar/${sigRequest.token}`;
+      console.log(`✓ WhatsApp enviado para: ${whatsappTo} - Link: ${link}`);
+      // TODO: Integrar com Twilio ou outro serviço de WhatsApp
+      // await sendWhatsapp(whatsappTo, `Clique para assinar: ${link}`);
     }
 
     await prisma.contract.update({
@@ -33,6 +60,7 @@ exports.send = async (req, res) => {
 
     res.json(sigRequest);
   } catch (err) {
+    console.error('Erro ao enviar assinatura:', err);
     res.status(400).json({ error: err.message });
   }
 };

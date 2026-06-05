@@ -11,8 +11,21 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
+    const body = { ...req.body };
+    if (body.date) {
+      let s = body.date;
+      if (typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        s = `${s}T00:00:00Z`;
+      }
+      const d = new Date(s);
+      if (isNaN(d.getTime())) {
+        return res.status(400).json({ error: 'Invalid date. Expected ISO-8601 DateTime.' });
+      }
+      body.date = d;
+    }
+
     const item = await prisma.obraManutencao.create({
-      data: { ...req.body, obraId: req.params.obraId }
+      data: { ...body, obraId: req.params.obraId }
     });
     res.json(item);
   } catch (err) {

@@ -8,8 +8,20 @@ exports.contractsReport = async (req, res) => {
   const where = { companyId };
   if (status)    where.status    = status;
   if (type)      where.type      = type;
-  if (startDate) where.startDate = { gte: new Date(startDate) };
-  if (endDate)   where.endDate   = { lte: new Date(endDate) };
+  if (startDate) {
+    let s = startDate;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) s = `${s}T00:00:00Z`;
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return res.status(400).json({ error: 'Invalid startDate query param' });
+    where.startDate = { gte: d };
+  }
+  if (endDate) {
+    let s = endDate;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) s = `${s}T23:59:59Z`;
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return res.status(400).json({ error: 'Invalid endDate query param' });
+    where.endDate = { lte: d };
+  }
 
   const contracts = await prisma.contract.findMany({
     where,
